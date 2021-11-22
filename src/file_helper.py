@@ -23,7 +23,7 @@ def parse_file(path: str) -> tuple:
         return _do_file_parse_strategy(f)
 
 
-def _do_file_parse_strategy(f: TextIO):
+def _do_file_parse_strategy(f: TextIO) -> tuple:
     title = description = ""
 
     for line in f:

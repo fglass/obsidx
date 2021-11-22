@@ -3,6 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QLineEdit, QListWidget
 from file_helper import load_files, parse_file
 from result_item import ResultItem
+from src.tray_icon import TrayIcon
 
 UI_WIDTH = 672
 UI_HEIGHT = 250
@@ -33,8 +34,7 @@ class MainWindow(QMainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.deleteLater()
-            sys.exit()
+            self.close()
         else:
             event.accept()
 
@@ -98,8 +98,14 @@ def _create_database() -> dict:
 
 def main():
     app = QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
     window = MainWindow()
-    window.show()
+
+    tray_icon = TrayIcon()
+    tray_icon.open_action.triggered.connect(window.show)
+    tray_icon.quit_action.triggered.connect(app.quit)
+    tray_icon.show()
+
     app.exec()
 
 
