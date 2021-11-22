@@ -70,12 +70,13 @@ class MainWindow(QMainWindow):
             return
 
         idx = 0
+        search_input = search_input.lower()
 
         for file, (title, description) in self._database.items():
             if idx == MAX_N_RESULTS:
                 break
 
-            if search_input.lower() in title.lower():
+            if search_input in title.lower() or search_input in description.lower():
                 item = self._result_item_pool[idx]
                 item.set(file, title, description)
                 idx += 1

@@ -1,32 +1,42 @@
 import os
-from config import VAULT_NAME, VAULT_DIRECTORY, OPEN_WITH_DEFAULT_EDITOR
+import urllib.parse
+from config import VAULT_DIRECTORY, OPEN_WITH_DEFAULT_EDITOR
+from typing import TextIO
 
-OBSIDIAN_URL = rf"obsidian://open?vault={VAULT_NAME}&file"
+OBSIDIAN_URL = rf"obsidian://open?path="
 
 
 def load_files() -> list:
-    return [f for f in os.listdir(VAULT_DIRECTORY) if f.endswith(".md")]  # TODO: nested directories
+    paths = []
+
+    for path, _, files in os.walk(VAULT_DIRECTORY):
+        for name in files:
+            file_path = os.path.join(path, name)
+            if file_path.endswith(".md"):
+                paths.append(file_path)
+
+    return paths
 
 
-def parse_file(filename: str) -> tuple:
-    path = rf"{VAULT_DIRECTORY}\{filename}"
+def parse_file(path: str) -> tuple:
+    with open(path, "r") as f:
+        return _do_file_parse_strategy(f)
+
+
+def _do_file_parse_strategy(f: TextIO):
     title = description = ""
 
-    with open(path, "r") as f:
-        for line in f.readlines():
-            if "#" in line and title == "":
-                title = line.replace("# ", "").replace("\n", "")
-            elif "##" in line:
-                description = line.replace("## ", "").replace("\n", "")
-                break
+    for line in f:
+        if line.startswith("# "):
+            title = line.replace("# ", "").replace("\n", "")
+            description = next(f).replace("\n", "")
 
     return title, description
 
 
-def open_file(filename: str):  # TODO: cross-platform
+def open_file(path: str):  # TODO: cross-platform
     if OPEN_WITH_DEFAULT_EDITOR:
-        path = rf"{VAULT_DIRECTORY}\{filename}"
         os.startfile(path)
     else:
-        url = f"{OBSIDIAN_URL}={filename.replace('.md', '')}"
-        os.startfile(url)
+        encoded_path = urllib.parse.quote(path)
+        os.startfile(OBSIDIAN_URL + encoded_path)
