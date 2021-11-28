@@ -15,11 +15,13 @@ def load_files() -> list:
             if file_path.endswith(".md"):
                 paths.append(file_path)
 
+    print(f"Loaded {len(paths)} files")
+
     return paths
 
 
 def parse_file(path: str) -> tuple:
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         return _do_file_parse_strategy(f)
 
 

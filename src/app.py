@@ -1,8 +1,11 @@
 import sys
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QLineEdit, QListWidget
+from pynput.keyboard import HotKey, Listener
 from file_helper import load_files, parse_file
 from result_item import ResultItem
+from src.config import TOGGLE_KEYBIND
 from src.tray_icon import TrayIcon
 
 UI_WIDTH = 672
@@ -14,13 +17,16 @@ BACKGROUND_COLOR = "#171717"
 
 
 class MainWindow(QMainWindow):
+    toggle_signal = QtCore.pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self._database = _create_database()
         self._result_item_pool = []
 
+        self.toggle_signal.connect(self.toggle)
         self.setFixedSize(UI_WIDTH, UI_HEIGHT)
-        self.setWindowFlag(Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
         widget = QWidget()
@@ -31,6 +37,12 @@ class MainWindow(QMainWindow):
 
         self._add_search_bar(layout)
         self._add_results_list(layout)
+
+    def toggle(self):
+        if self.isVisible():
+            self.close()
+        else:
+            self.show()  # TODO: take focus
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -100,6 +112,10 @@ def main():
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
     window = MainWindow()
+
+    hotkey = HotKey(HotKey.parse(TOGGLE_KEYBIND), window.toggle_signal.emit)
+    hotkey_listener = Listener(on_press=hotkey.press, on_release=hotkey.release)
+    hotkey_listener.start()
 
     tray_icon = TrayIcon()
     tray_icon.open_action.triggered.connect(window.show)
