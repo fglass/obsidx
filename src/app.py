@@ -5,15 +5,15 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QLi
 from pynput.keyboard import HotKey, Listener
 from file_helper import load_files, parse_file
 from result_item import ResultItem
-from src.config import TOGGLE_KEYBIND
+from src.config import TOGGLE_KEYBIND, BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR
 from src.tray_icon import TrayIcon
 
 UI_WIDTH = 672
 UI_HEIGHT = 250
-SEARCH_BAR_HEIGHT = 70
+INITIAL_WINDOW_HEIGHT = 60
+SEARCH_BAR_HEIGHT = 40
 RESULT_ITEM_HEIGHT = 56
 MAX_N_RESULTS = 3
-BACKGROUND_COLOR = "#171717"
 
 
 class MainWindow(QMainWindow):
@@ -29,9 +29,11 @@ class MainWindow(QMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
+        self.setFixedHeight(INITIAL_WINDOW_HEIGHT)
+        self.setStyleSheet(f"background-color: {BACKGROUND_COLOUR}; color: {TEXT_COLOUR}; border-radius: 5px")
+
         widget = QWidget()
         layout = QVBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
         widget.setLayout(layout)
         self.setCentralWidget(widget)
 
@@ -53,15 +55,19 @@ class MainWindow(QMainWindow):
     def _add_search_bar(self, layout: QVBoxLayout):
         search_bar = QLineEdit()
         search_bar.setFixedHeight(SEARCH_BAR_HEIGHT)
-        search_bar.setStyleSheet(f"background-color: {BACKGROUND_COLOR}; color: white; padding-left: 5px;")
+        search_bar.setStyleSheet(
+            f"background-color: {DARK_COLOUR}; padding-left: 5px; border: 1px solid {ACCENT_COLOUR}; border-radius: 5px"
+        )
 
         search_bar.setPlaceholderText("Search...")
         search_bar.textChanged.connect(self._on_search)
         layout.addWidget(search_bar)
 
-    def _add_results_list(self, layout: QVBoxLayout):
+    def _add_results_list(self, layout: QVBoxLayout):  # TODO: transparent pressed colour?
         self._results_list = QListWidget()
-        self._results_list.setStyleSheet("QListWidget { background-color: %s; }" % BACKGROUND_COLOR)
+        self._results_list.setStyleSheet(
+            "QListWidget::item:hover:!active { background: transparent } QListWidget::item { background: transparent; }"
+        )
         self._hide_results_list()
         layout.addWidget(self._results_list)
         layout.addStretch(1)
@@ -93,10 +99,13 @@ class MainWindow(QMainWindow):
                 item.set(file, title, description)
                 idx += 1
 
-        self._results_list.setFixedHeight(RESULT_ITEM_HEIGHT * idx)
+        results_height = RESULT_ITEM_HEIGHT * idx
+        self._results_list.setFixedHeight(results_height)
+        self.setFixedHeight(INITIAL_WINDOW_HEIGHT + results_height)
 
     def _hide_results_list(self):
         self._results_list.setFixedHeight(0)
+        self.setFixedHeight(INITIAL_WINDOW_HEIGHT)
 
 
 def _create_database() -> dict:

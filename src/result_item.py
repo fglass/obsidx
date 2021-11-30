@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidgetItem, QListWidget
+from src.config import DARK_COLOUR
 from src.file_helper import open_file
 
-STYLESHEET = "QLabel { color : white; background-color: transparent }"
+STYLESHEET = "QWidget:hover { background-color: %s } QLabel { background-color: transparent }" % DARK_COLOUR
 
 
 class ResultItem(QListWidgetItem):
