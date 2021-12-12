@@ -1,3 +1,3 @@
 ## obsidx
 
-Index and search markdown files
+Quick launcher for markdown files in [Obsidian](https://obsidian.md/) vaults

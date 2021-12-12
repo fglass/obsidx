@@ -1,7 +1,6 @@
 import os
 import urllib.parse
 from config import VAULT_DIRECTORY, OPEN_WITH_DEFAULT_EDITOR
-from typing import TextIO
 
 OBSIDIAN_URL = rf"obsidian://open?path="
 
@@ -15,25 +14,7 @@ def load_files() -> list:
             if file_path.endswith(".md"):
                 paths.append(file_path)
 
-    print(f"Loaded {len(paths)} files")
-
     return paths
-
-
-def parse_file(path: str) -> tuple:
-    with open(path, "r", encoding="utf-8") as f:
-        return _do_file_parse_strategy(f)
-
-
-def _do_file_parse_strategy(f: TextIO) -> tuple:
-    title = description = ""
-
-    for line in f:
-        if line.startswith("# "):
-            title = line.replace("# ", "").replace("\n", "")
-            description = next(f).replace("\n", "")
-
-    return title, description
 
 
 def open_file(path: str):  # TODO: cross-platform

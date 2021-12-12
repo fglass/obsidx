@@ -1,9 +1,12 @@
+import logging
+import os
 import sys
+import time
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QLineEdit, QListWidget
 from pynput.keyboard import HotKey, Listener
-from file_helper import load_files, parse_file
+from file_helper import load_files
 from result_item import ResultItem
 from src.config import TOGGLE_KEYBIND, BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR
 from src.tray_icon import TrayIcon
@@ -13,7 +16,7 @@ UI_HEIGHT = 250
 INITIAL_WINDOW_HEIGHT = 60
 SEARCH_BAR_HEIGHT = 40
 RESULT_ITEM_HEIGHT = 56
-MAX_N_RESULTS = 3
+MAX_N_RESULTS = 4
 
 
 class MainWindow(QMainWindow):
@@ -44,7 +47,7 @@ class MainWindow(QMainWindow):
         if self.isVisible():
             self.close()
         else:
-            self.show()  # TODO: take focus
+            self.show()  # TODO: take hard focus
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -90,13 +93,15 @@ class MainWindow(QMainWindow):
         idx = 0
         search_input = search_input.lower()
 
-        for file, (title, description) in self._database.items():
+        for file_path in self._database:
             if idx == MAX_N_RESULTS:
                 break
 
-            if search_input in title.lower() or search_input in description.lower():
+            filename = os.path.basename(file_path).replace(".md", "")
+
+            if search_input in filename.lower():
                 item = self._result_item_pool[idx]
-                item.set(file, title, description)
+                item.set(filename, file_path)
                 idx += 1
 
         results_height = RESULT_ITEM_HEIGHT * idx
@@ -108,12 +113,10 @@ class MainWindow(QMainWindow):
         self.setFixedHeight(INITIAL_WINDOW_HEIGHT)
 
 
-def _create_database() -> dict:
-    database = {}
-
-    for file in load_files():
-        database[file] = parse_file(file)
-
+def _create_database() -> list:
+    start = time.time()
+    database = load_files()
+    logging.info(f"Created database of {len(database)} files in {time.time() - start:.3f}s")
     return database
 
 
@@ -135,4 +138,5 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
     main()
