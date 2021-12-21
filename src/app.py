@@ -2,13 +2,16 @@ import logging
 import os
 import sys
 import time
+import win32api
+import win32gui
+import win32process
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QLineEdit, QListWidget
 from pynput.keyboard import HotKey, Listener
 from file_helper import load_files
 from result_item import ResultItem
-from src.config import TOGGLE_KEYBIND, BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR
+from src.config import TOGGLE_KEYBIND, BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR, WINDOW_NAME
 from src.tray_icon import TrayIcon
 
 UI_WIDTH = 672
@@ -31,6 +34,7 @@ class MainWindow(QMainWindow):
         self.setFixedSize(UI_WIDTH, UI_HEIGHT)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setFocusPolicy(Qt.StrongFocus)
 
         self.setFixedHeight(INITIAL_WINDOW_HEIGHT)
         self.setStyleSheet(f"background-color: {BACKGROUND_COLOUR}; color: {TEXT_COLOUR}; border-radius: 5px")
@@ -47,13 +51,21 @@ class MainWindow(QMainWindow):
         if self.isVisible():
             self.close()
         else:
-            self.show()  # TODO: take hard focus
+            self.show()
+            _set_window_focus()
+            self.activateWindow()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.close()
         else:
             event.accept()
+
+    def changeEvent(self, event: QEvent):
+        super().changeEvent(event)
+        if event.type() == QEvent.ActivationChange:
+            if not self.isActiveWindow():
+                self.close()
 
     def _add_search_bar(self, layout: QVBoxLayout):
         search_bar = QLineEdit()
@@ -120,10 +132,19 @@ def _create_database() -> list:
     return database
 
 
+def _set_window_focus():
+    handle = win32gui.FindWindow(None, WINDOW_NAME)
+    if handle != 0:
+        remote_thread, _ = win32process.GetWindowThreadProcessId(handle)
+        win32process.AttachThreadInput(win32api.GetCurrentThreadId(), remote_thread, True)
+        win32gui.SetFocus(handle)
+
+
 def main():
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
     window = MainWindow()
+    window.toggle()
 
     hotkey = HotKey(HotKey.parse(TOGGLE_KEYBIND), window.toggle_signal.emit)
     hotkey_listener = Listener(on_press=hotkey.press, on_release=hotkey.release)

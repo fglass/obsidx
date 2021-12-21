@@ -1,7 +1,8 @@
 # User settings
 VAULT_DIRECTORY = rf"C:\Users\Fred\Portfolio\mind-palace"
 TOGGLE_KEYBIND = "<cmd>+`"
-OPEN_WITH_DEFAULT_EDITOR = True
+WINDOW_NAME = u"obsidx – app.py"
+OPEN_WITH_DEFAULT_EDITOR = False
 
 # UI constants
 BACKGROUND_COLOUR = "#202020"
