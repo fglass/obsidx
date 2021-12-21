@@ -29,6 +29,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self._database = _create_database()
         self._result_item_pool = []
+        self._attached_thread = False
 
         self.toggle_signal.connect(self.toggle)
         self.setFixedSize(UI_WIDTH, UI_HEIGHT)
@@ -52,8 +53,21 @@ class MainWindow(QMainWindow):
             self.close()
         else:
             self.show()
-            _set_window_focus()
+            self._set_window_focus()
             self.activateWindow()
+
+    def _set_window_focus(self):
+        handle = win32gui.FindWindow(None, WINDOW_NAME)
+
+        if handle == 0:
+            return
+
+        if not self._attached_thread:
+            remote_thread, _ = win32process.GetWindowThreadProcessId(handle)
+            win32process.AttachThreadInput(win32api.GetCurrentThreadId(), remote_thread, True)
+            self._attached_thread = True
+
+        win32gui.SetFocus(handle)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -130,14 +144,6 @@ def _create_database() -> list:
     database = load_files()
     logging.info(f"Created database of {len(database)} files in {time.time() - start:.3f}s")
     return database
-
-
-def _set_window_focus():
-    handle = win32gui.FindWindow(None, WINDOW_NAME)
-    if handle != 0:
-        remote_thread, _ = win32process.GetWindowThreadProcessId(handle)
-        win32process.AttachThreadInput(win32api.GetCurrentThreadId(), remote_thread, True)
-        win32gui.SetFocus(handle)
 
 
 def main():
