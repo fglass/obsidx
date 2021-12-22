@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self._database = _create_database()
         self._result_item_pool = []
-        self._attached_thread = False
+        self._attached_thread_input = False
 
         self.toggle_signal.connect(self.toggle)
         self.setFixedSize(UI_WIDTH, UI_HEIGHT)
@@ -56,19 +56,6 @@ class MainWindow(QMainWindow):
             self._set_window_focus()
             self.activateWindow()
 
-    def _set_window_focus(self):
-        handle = win32gui.FindWindow(None, WINDOW_NAME)
-
-        if handle == 0:
-            return
-
-        if not self._attached_thread:
-            remote_thread, _ = win32process.GetWindowThreadProcessId(handle)
-            win32process.AttachThreadInput(win32api.GetCurrentThreadId(), remote_thread, True)
-            self._attached_thread = True
-
-        win32gui.SetFocus(handle)
-
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.close()
@@ -80,6 +67,22 @@ class MainWindow(QMainWindow):
         if event.type() == QEvent.ActivationChange:
             if not self.isActiveWindow():
                 self.close()
+
+    def _set_window_focus(self):
+        handle = win32gui.FindWindow(None, WINDOW_NAME)
+
+        if handle == 0:
+            return
+
+        if not self._attached_thread_input:
+            self._attach_thread_input(handle)
+
+        win32gui.SetFocus(handle)
+
+    def _attach_thread_input(self, handle: int):
+        remote_thread, _ = win32process.GetWindowThreadProcessId(handle)
+        win32process.AttachThreadInput(win32api.GetCurrentThreadId(), remote_thread, True)
+        self._attached_thread_input = True
 
     def _add_search_bar(self, layout: QVBoxLayout):
         search_bar = QLineEdit()
@@ -150,7 +153,6 @@ def main():
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
     window = MainWindow()
-    window.toggle()
 
     hotkey = HotKey(HotKey.parse(TOGGLE_KEYBIND), window.toggle_signal.emit)
     hotkey_listener = Listener(on_press=hotkey.press, on_release=hotkey.release)

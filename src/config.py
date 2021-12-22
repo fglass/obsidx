@@ -1,7 +1,7 @@
 # User settings
-VAULT_DIRECTORY = rf"C:\Users\Fred\Portfolio\mind-palace"
-TOGGLE_KEYBIND = "<cmd>+`"
 WINDOW_NAME = u"obsidx – app.py"
+VAULT_DIRECTORY = rf"C:\Users\Fred\Portfolio\mind-palace"
+TOGGLE_KEYBIND = "<shift>+<F12>"
 OPEN_WITH_DEFAULT_EDITOR = False
 
 # UI constants

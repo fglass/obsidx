@@ -1,3 +1,4 @@
+from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidgetItem, QListWidget
 from src.config import DARK_COLOUR, VAULT_DIRECTORY
 from src.file_helper import open_file
@@ -13,7 +14,7 @@ class ResultItem(QListWidgetItem):
 
         self.widget = QWidget()
         self.widget.setStyleSheet(STYLESHEET)
-        self.widget.mouseReleaseEvent = lambda _: open_file(self._file_path)
+        self.widget.mouseReleaseEvent = self._on_click
 
         layout = QVBoxLayout()
         self.widget.setLayout(layout)
@@ -38,3 +39,7 @@ class ResultItem(QListWidgetItem):
 
         self._file_path = file_path
         self.setHidden(False)
+
+    def _on_click(self, _: QMouseEvent):
+        open_file(self._file_path)
+        self.widget.window().close()
