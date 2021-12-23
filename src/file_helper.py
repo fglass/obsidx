@@ -17,7 +17,7 @@ def load_files() -> list:
     return paths
 
 
-def open_file(path: str):  # TODO: cross-platform
+def open_file(path: str):
     if OPEN_WITH_DEFAULT_EDITOR:
         os.startfile(path)
     else:
