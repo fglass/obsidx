@@ -6,10 +6,10 @@ from ctypes import byref, windll, wintypes
 
 
 class HotkeyListener(threading.Thread):
-    def __init__(self, hotkeys: dict, hotkey_actions: dict):
+    def __init__(self, hotkeys: dict, actions: dict):
         super().__init__()
         self._hotkeys = hotkeys
-        self._hotkey_actions = hotkey_actions
+        self._actions = actions
         self._thread_id = None
 
     def stop(self):
@@ -33,7 +33,7 @@ class HotkeyListener(threading.Thread):
         msg = wintypes.MSG()
         while windll.user32.GetMessageA(byref(msg), None, 0, 0) != 0:
             if msg.message == win32con.WM_HOTKEY:
-                action = self._hotkey_actions.get(msg.wParam)
+                action = self._actions.get(msg.wParam)
                 if action:
                     action()
 
