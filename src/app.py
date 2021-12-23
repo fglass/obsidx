@@ -9,10 +9,10 @@ import win32process
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QLineEdit, QListWidget
-from file_helper import load_files
-from result_item import ResultItem
 from src import hotkey_listener
 from src.config import BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR, WINDOW_NAME, TOGGLE_HOTKEY
+from src.file_helper import load_files
+from src.result_item import ResultItem
 from src.tray_icon import TrayIcon
 
 UI_WIDTH = 672
@@ -21,6 +21,11 @@ INITIAL_WINDOW_HEIGHT = 60
 SEARCH_BAR_HEIGHT = 40
 RESULT_ITEM_HEIGHT = 56
 MAX_N_RESULTS = 4
+
+# TODO:
+#   - Click highlight bug
+#   - Settings menu
+#   - Installer
 
 
 class MainWindow(QMainWindow):
