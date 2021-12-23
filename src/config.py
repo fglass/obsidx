@@ -1,7 +1,8 @@
 import win32con
 
-# User settings
 WINDOW_NAME = u"obsidx – app.py"
+
+# User settings
 VAULT_DIRECTORY = rf"C:\Users\Fred\Portfolio\mind-palace"
 TOGGLE_HOTKEY = (win32con.VK_F8, win32con.MOD_ALT)
 OPEN_WITH_DEFAULT_EDITOR = False

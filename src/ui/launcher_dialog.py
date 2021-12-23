@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import QWidget, QMainWindow, QVBoxLayout, QLineEdit, QListWidget
 from src.config import BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR, WINDOW_NAME
 from src.file_helper import load_files
-from src.result_item import ResultItem
+from src.ui.result_item import ResultItem
 
 UI_WIDTH = 672
 UI_HEIGHT = 250

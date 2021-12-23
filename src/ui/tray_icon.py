@@ -2,7 +2,7 @@ import os
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QSystemTrayIcon, QMenu
 
-ICON_PATH = rf"{os.path.dirname(os.path.dirname(os.path.abspath(__file__)))}\res\icon.png"
+ICON_PATH = rf"{os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))}\res\icon.png"
 
 
 class TrayIcon(QSystemTrayIcon):
