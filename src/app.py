@@ -1,7 +1,6 @@
 import logging
 import os
 import sys
-import threading
 import time
 import win32api
 import win32gui
@@ -9,9 +8,9 @@ import win32process
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QLineEdit, QListWidget
-from src import hotkey_listener
 from src.config import BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR, WINDOW_NAME, TOGGLE_HOTKEY
 from src.file_helper import load_files
+from src.hotkey_listener import HotkeyListener
 from src.result_item import ResultItem
 from src.tray_icon import TrayIcon
 
@@ -162,12 +161,16 @@ def main():
 
     hotkeys = {1: TOGGLE_HOTKEY}
     hotkey_actions = {1: window.toggle_signal.emit}
-    listen_thread = threading.Thread(target=hotkey_listener.listen, args=(hotkeys, hotkey_actions))
-    listen_thread.start()
+    hotkey_listener = HotkeyListener(hotkeys, hotkey_actions)
+    hotkey_listener.start()
+
+    def quit_app():
+        hotkey_listener.stop()
+        app.quit()
 
     tray_icon = TrayIcon()
     tray_icon.open_action.triggered.connect(window.show)
-    tray_icon.quit_action.triggered.connect(app.quit)
+    tray_icon.quit_action.triggered.connect(quit_app)
     tray_icon.show()
 
     app.exec()
