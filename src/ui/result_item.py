@@ -1,14 +1,15 @@
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidgetItem, QListWidget
-from src.config import DARK_COLOUR, VAULT_DIRECTORY
+from src.config import DARK_COLOUR, Config
 from src.file_helper import open_file
 
 STYLESHEET = "QWidget:hover { background-color: %s } QLabel { background-color: transparent }" % DARK_COLOUR
 
 
 class ResultItem(QListWidgetItem):
-    def __init__(self, parent: QListWidget = None):
+    def __init__(self, parent: QListWidget, config: Config):
         super().__init__(parent)
+        self._config = config
         self._file_path = ""
         self.setHidden(True)
 
@@ -34,12 +35,12 @@ class ResultItem(QListWidgetItem):
     def set(self, filename: str, file_path: str):
         self._title_label.setText(filename)
 
-        location = file_path.replace(VAULT_DIRECTORY, "").replace(f"\\{filename}.md", "") or "\\"
+        location = file_path.replace(self._config.vault_directory, "").replace(f"\\{filename}.md", "") or "\\"
         self._description_label.setText(location)
 
         self._file_path = file_path
         self.setHidden(False)
 
     def _on_click(self, _: QMouseEvent):
-        open_file(self._file_path)
+        open_file(self._file_path, self._config.use_default_editor)
         self.widget.window().close()

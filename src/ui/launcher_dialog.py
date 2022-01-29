@@ -7,7 +7,7 @@ import win32process
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import QWidget, QMainWindow, QVBoxLayout, QLineEdit, QListWidget
-from src.config import BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR, WINDOW_NAME
+from src.config import BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR, WINDOW_NAME, Config
 from src.file_helper import load_files
 from src.ui.result_item import ResultItem
 
@@ -22,13 +22,18 @@ MAX_N_RESULTS = 4
 class LauncherDialog(QMainWindow):
     toggle_signal = QtCore.pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, config: Config):
         super().__init__()
-        self._database = _create_database()
-        self._result_item_pool = []
+        self._config = config
         self._attached_thread_input = False
+        self._result_item_pool = []
+
+        self._vault = {}
+        self._load_vault()
 
         self.toggle_signal.connect(self.toggle)
+        self._config.vault_change_signal.connect(self._load_vault)
+
         self.setFixedSize(UI_WIDTH, UI_HEIGHT)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -44,6 +49,11 @@ class LauncherDialog(QMainWindow):
 
         self._add_search_bar(layout)
         self._add_results_list(layout)
+
+    def _load_vault(self):
+        start = time.time()
+        self._vault = load_files(self._config.vault_directory)
+        logging.info(f"Loaded {len(self._vault)} files in {time.time() - start:.3f}s")
 
     def toggle(self):
         if self.isVisible():
@@ -103,7 +113,7 @@ class LauncherDialog(QMainWindow):
         [self._add_result_item() for _ in range(MAX_N_RESULTS)]
 
     def _add_result_item(self):
-        item = ResultItem(self._results_list)
+        item = ResultItem(self._results_list, self._config)
         item.init()
         self._results_list.addItem(item)
         self._results_list.setItemWidget(item, item.widget)
@@ -119,7 +129,7 @@ class LauncherDialog(QMainWindow):
         idx = 0
         search_input = search_input.lower()
 
-        for file_path in self._database:
+        for file_path in self._vault:
             if idx == MAX_N_RESULTS:
                 break
 
@@ -137,10 +147,3 @@ class LauncherDialog(QMainWindow):
     def _hide_results_list(self):
         self._results_list.setFixedHeight(0)
         self.setFixedHeight(INITIAL_WINDOW_HEIGHT)
-
-
-def _create_database() -> list:
-    start = time.time()
-    database = load_files()
-    logging.info(f"Loaded {len(database)} files in {time.time() - start:.3f}s")
-    return database

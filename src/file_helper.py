@@ -1,14 +1,13 @@
 import os
 import urllib.parse
-from config import VAULT_DIRECTORY, OPEN_WITH_DEFAULT_EDITOR
 
 OBSIDIAN_URL = rf"obsidian://open?path="
 
 
-def load_files() -> list:
+def load_files(vault_directory: str) -> list:
     paths = []
 
-    for path, _, files in os.walk(VAULT_DIRECTORY):
+    for path, _, files in os.walk(vault_directory):
         for name in files:
             file_path = os.path.join(path, name)
             if file_path.endswith(".md"):
@@ -17,8 +16,8 @@ def load_files() -> list:
     return paths
 
 
-def open_file(path: str):
-    if OPEN_WITH_DEFAULT_EDITOR:
+def open_file(path: str, use_default_editor: bool):
+    if use_default_editor:
         os.startfile(path)
     else:
         encoded_path = urllib.parse.quote(path)
