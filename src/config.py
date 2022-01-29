@@ -1,12 +1,14 @@
+import json
+import logging
 import os
 import win32con
 from PyQt5 import QtCore
-
-# App constants
 from PyQt5.QtCore import QObject
 
+# App constants
 WINDOW_NAME = u"obsidx – app.py"
 RESOURCE_PATH = rf"{os.path.dirname(os.path.dirname((os.path.abspath(__file__))))}\res"
+CONFIG_FILE = rf"{os.path.expanduser('~')}\.obsidx"
 
 # UI constants
 BACKGROUND_COLOUR = "#202020"
@@ -49,7 +51,19 @@ class Config(QObject):
         self.save()
 
     def load(self):
-        pass
+        try:
+            with open(CONFIG_FILE, "r") as f:
+                settings_dto = json.load(f)
+                self._vault_directory = settings_dto.get("VAULT", "")
+                self._use_default_editor = settings_dto.get("DEFAULT_EDITOR", False)
+                logging.info(f"Loaded settings: {settings_dto}")
+        except FileNotFoundError:
+            logging.info("No settings found")
 
     def save(self):
-        pass
+        with open(CONFIG_FILE, "w") as f:
+            settings_dto = {
+                "VAULT": self._vault_directory,
+                "DEFAULT_EDITOR": self._use_default_editor,
+            }
+            json.dump(settings_dto, f)

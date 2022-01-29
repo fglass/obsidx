@@ -42,7 +42,7 @@ class SettingsMenu(QWidget):
 
         layout.addWidget(QLabel("Use Default Editor:"))
         default_editor_checkbox = QCheckBox()
-        default_editor_checkbox.setCheckState(config.use_default_editor)
+        default_editor_checkbox.setChecked(config.use_default_editor)
         default_editor_checkbox.toggled.connect(self.toggle_default_editor_checkbox)
         layout.addWidget(default_editor_checkbox)
 
