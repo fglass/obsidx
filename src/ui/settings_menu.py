@@ -1,12 +1,10 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QCheckBox, QFileDialog, QPushButton, QHBoxLayout
-from src.config import RESOURCE_PATH, Config
+from src.config import Config, WINDOW_ICON_PATH, FOLDER_ICON_PATH
 
 MENU_WIDTH = 400
 MENU_HEIGHT = 150
-WINDOW_ICON_PATH = rf"{RESOURCE_PATH}\icon.png"
-FOLDER_ICON_PATH = rf"{RESOURCE_PATH}\folder.png"
 
 
 class SettingsMenu(QWidget):

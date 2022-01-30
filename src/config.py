@@ -7,8 +7,10 @@ from PyQt5.QtCore import QObject
 
 # App constants
 WINDOW_NAME = u"obsidx – app.py"
-RESOURCE_PATH = rf"{os.path.dirname(os.path.dirname((os.path.abspath(__file__))))}\res"
 CONFIG_FILE = rf"{os.path.expanduser('~')}\.obsidx"
+RESOURCE_PATH = rf"{os.path.dirname(os.path.dirname((os.path.abspath(__file__))))}\res"
+WINDOW_ICON_PATH = rf"{RESOURCE_PATH}\icon.png"
+FOLDER_ICON_PATH = rf"{RESOURCE_PATH}\folder.png"
 
 # UI constants
 BACKGROUND_COLOUR = "#202020"

@@ -6,14 +6,14 @@ import win32gui
 import win32process
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QMainWindow, QVBoxLayout, QLineEdit, QListWidget
-from src.config import BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR, WINDOW_NAME, Config
+from src.config import BACKGROUND_COLOUR, DARK_COLOUR, ACCENT_COLOUR, TEXT_COLOUR, WINDOW_NAME, WINDOW_ICON_PATH, Config
 from src.file_helper import load_files
 from src.ui.result_item import ResultItem
 
 UI_WIDTH = 672
-UI_HEIGHT = 250
-INITIAL_WINDOW_HEIGHT = 60
+BASE_UI_HEIGHT = 60
 SEARCH_BAR_HEIGHT = 40
 RESULT_ITEM_HEIGHT = 56
 MAX_N_RESULTS = 4
@@ -34,12 +34,12 @@ class LauncherDialog(QMainWindow):
         self.toggle_signal.connect(self.toggle)
         self._config.vault_change_signal.connect(self._load_vault)
 
-        self.setFixedSize(UI_WIDTH, UI_HEIGHT)
+        self.setFixedSize(UI_WIDTH, BASE_UI_HEIGHT)
+        self.setWindowIcon(QIcon(WINDOW_ICON_PATH))
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setFocusPolicy(Qt.StrongFocus)
 
-        self.setFixedHeight(INITIAL_WINDOW_HEIGHT)
         self.setStyleSheet(
             "QWidget#LauncherDialog { border-radius: 5px } QWidget { background-color: %s; color: %s } "
             % (BACKGROUND_COLOUR, TEXT_COLOUR)
@@ -144,8 +144,8 @@ class LauncherDialog(QMainWindow):
 
         results_height = RESULT_ITEM_HEIGHT * idx
         self._results_list.setFixedHeight(results_height)
-        self.setFixedHeight(INITIAL_WINDOW_HEIGHT + results_height)
+        self.setFixedHeight(BASE_UI_HEIGHT + results_height)
 
     def _hide_results_list(self):
         self._results_list.setFixedHeight(0)
-        self.setFixedHeight(INITIAL_WINDOW_HEIGHT)
+        self.setFixedHeight(BASE_UI_HEIGHT)

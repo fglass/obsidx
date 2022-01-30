@@ -1,3 +1,4 @@
+release/
 venv/
 .idea/
 *__pycache__/

@@ -1,13 +1,11 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QSystemTrayIcon, QMenu
-from src.config import RESOURCE_PATH
-
-ICON_PATH = rf"{RESOURCE_PATH}\icon.png"
+from src.config import WINDOW_ICON_PATH
 
 
 class TrayIcon(QSystemTrayIcon):
     def __init__(self, parent=None):
-        super().__init__(QIcon(ICON_PATH), parent)
+        super().__init__(QIcon(WINDOW_ICON_PATH), parent)
         self.menu = QMenu(parent)
         self.open_action = self.menu.addAction("Open")
         self.settings_action = self.menu.addAction("Settings")
