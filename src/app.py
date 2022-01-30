@@ -1,17 +1,11 @@
 import logging
 import sys
 from PyQt5.QtWidgets import QApplication
-
 from src.config import Config
 from src.hotkey_listener import HotkeyListener
 from src.ui.launcher_dialog import LauncherDialog
 from src.ui.settings_menu import SettingsMenu
 from src.ui.tray_icon import TrayIcon
-
-
-# TODO:
-#   - Click highlight bug
-#   - Installer
 
 
 def main():
@@ -56,5 +50,5 @@ def _create_tray_icon(app: QApplication, launcher: LauncherDialog, settings_menu
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p", level=logging.INFO)
+    logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p", level=logging.INFO)
     main()

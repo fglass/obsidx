@@ -40,11 +40,15 @@ class LauncherDialog(QMainWindow):
         self.setFocusPolicy(Qt.StrongFocus)
 
         self.setFixedHeight(INITIAL_WINDOW_HEIGHT)
-        self.setStyleSheet(f"background-color: {BACKGROUND_COLOUR}; color: {TEXT_COLOUR}; border-radius: 5px")
+        self.setStyleSheet(
+            "QWidget#LauncherDialog { border-radius: 5px } QWidget { background-color: %s; color: %s } "
+            % (BACKGROUND_COLOUR, TEXT_COLOUR)
+        )
 
         widget = QWidget()
         layout = QVBoxLayout()
         widget.setLayout(layout)
+        widget.setObjectName("LauncherDialog")
         self.setCentralWidget(widget)
 
         self._add_search_bar(layout)
@@ -102,11 +106,9 @@ class LauncherDialog(QMainWindow):
         search_bar.textChanged.connect(self._on_search)
         layout.addWidget(search_bar)
 
-    def _add_results_list(self, layout: QVBoxLayout):  # TODO: transparent pressed colour?
+    def _add_results_list(self, layout: QVBoxLayout):
         self._results_list = QListWidget()
-        self._results_list.setStyleSheet(
-            "QListWidget::item:hover:!active { background: transparent } QListWidget::item { background: transparent; }"
-        )
+        self._results_list.setStyleSheet("QListWidget { border: none }")
         self._hide_results_list()
         layout.addWidget(self._results_list)
         layout.addStretch(1)

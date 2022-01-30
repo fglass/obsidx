@@ -25,7 +25,7 @@ class Config(QObject):
         self._toggle_hotkey = (win32con.VK_F8, win32con.MOD_ALT)
         self._vault_directory = ""
         self._use_default_editor = False
-        self.load()
+        self._load()
 
     @property
     def toggle_hotkey(self):
@@ -42,28 +42,28 @@ class Config(QObject):
     @vault_directory.setter
     def vault_directory(self, value):
         self._vault_directory = value
-        self.save()
         self.vault_change_signal.emit()
+        self._save()
 
     @use_default_editor.setter
     def use_default_editor(self, value):
         self._use_default_editor = value
-        self.save()
+        self._save()
 
-    def load(self):
+    def _load(self):
         try:
             with open(CONFIG_FILE, "r") as f:
-                settings_dto = json.load(f)
-                self._vault_directory = settings_dto.get("VAULT", "")
-                self._use_default_editor = settings_dto.get("DEFAULT_EDITOR", False)
-                logging.info(f"Loaded settings: {settings_dto}")
+                config_dto = json.load(f)
+                self._vault_directory = config_dto.get("VAULT", "")
+                self._use_default_editor = config_dto.get("DEFAULT_EDITOR", False)
+                logging.info(f"Loaded config: {config_dto}")
         except FileNotFoundError:
-            logging.info("No settings found")
+            logging.info("No config found")
 
-    def save(self):
+    def _save(self):
         with open(CONFIG_FILE, "w") as f:
-            settings_dto = {
+            config_dto = {
                 "VAULT": self._vault_directory,
                 "DEFAULT_EDITOR": self._use_default_editor,
             }
-            json.dump(settings_dto, f)
+            json.dump(config_dto, f)
