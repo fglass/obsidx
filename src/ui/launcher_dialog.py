@@ -28,7 +28,7 @@ class LauncherDialog(QMainWindow):
         self._attached_thread_input = False
         self._result_item_pool = []
 
-        self._vault = {}
+        self._vault = []
         self._load_vault()
 
         self.toggle_signal.connect(self.toggle)
@@ -129,22 +129,29 @@ class LauncherDialog(QMainWindow):
             return
 
         idx = 0
-        search_input = search_input.lower()
 
-        for file_path in self._vault:
-            if idx == MAX_N_RESULTS:
+        for (name, path) in self._get_matching_files(search_input):
+            if idx >= MAX_N_RESULTS:
                 break
 
-            filename = os.path.basename(file_path).replace(".md", "")
-
-            if search_input in filename.lower():
-                item = self._result_item_pool[idx]
-                item.set(filename, file_path)
-                idx += 1
+            item = self._result_item_pool[idx]
+            item.set(name, path)
+            idx += 1
 
         results_height = RESULT_ITEM_HEIGHT * idx
         self._results_list.setFixedHeight(results_height)
         self.setFixedHeight(BASE_UI_HEIGHT + results_height)
+
+    def _get_matching_files(self, search_input: str) -> list:
+        matches = []
+        search_input = search_input.lower()
+
+        for path in self._vault:
+            name = os.path.basename(path).replace(".md", "")
+            if search_input in name.lower():
+                matches.append((name, path))
+
+        return sorted(matches, key=lambda file: 0 if file[0].lower().startswith(search_input) else 1)
 
     def _hide_results_list(self):
         self._results_list.setFixedHeight(0)
