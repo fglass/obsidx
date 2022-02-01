@@ -1,7 +1,8 @@
 import logging
 import sys
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication
-from src.config import Config
+from src.config import Config, FONT_SIZE
 from src.hotkey_listener import HotkeyListener
 from src.ui.launcher_dialog import LauncherDialog
 from src.ui.settings_menu import SettingsMenu
@@ -11,6 +12,7 @@ from src.ui.tray_icon import TrayIcon
 def main():
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
+    _set_fixed_font_size(app)
 
     config = Config()
     launcher = LauncherDialog(config)
@@ -26,6 +28,12 @@ def main():
     tray_icon.show()
 
     app.exec()
+
+
+def _set_fixed_font_size(app: QApplication):
+    font = QFont()
+    font.setPixelSize(FONT_SIZE)
+    app.setFont(font)
 
 
 def _create_hotkey_listener(config: Config, launcher: LauncherDialog) -> HotkeyListener:
