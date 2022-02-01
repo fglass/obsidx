@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QSystemTrayIcon, QMenu
-from src.config import WINDOW_ICON_PATH
+from src.config import APP_NAME, WINDOW_ICON_PATH
 
 
 class TrayIcon(QSystemTrayIcon):
@@ -11,3 +11,4 @@ class TrayIcon(QSystemTrayIcon):
         self.settings_action = self.menu.addAction("Settings")
         self.quit_action = self.menu.addAction("Quit")
         self.setContextMenu(self.menu)
+        self.setToolTip(APP_NAME)

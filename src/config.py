@@ -6,6 +6,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QObject
 
 # App constants
+APP_NAME = "obsidx"
 WINDOW_NAME = u"obsidx – app.py"
 CONFIG_FILE = rf"{os.path.expanduser('~')}\.obsidx"
 RESOURCE_PATH = rf"{os.path.dirname(os.path.dirname((os.path.abspath(__file__))))}\res"

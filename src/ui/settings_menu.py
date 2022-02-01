@@ -34,7 +34,7 @@ class SettingsMenu(QWidget):
         vault_layout.addWidget(open_dialog_button)
 
         layout.addWidget(QLabel("Hotkey:"))
-        hotkey_field = QLineEdit("Alt+F8")
+        hotkey_field = QLineEdit("Win+Alt+F8")
         hotkey_field.setDisabled(True)
         layout.addWidget(hotkey_field)
 
