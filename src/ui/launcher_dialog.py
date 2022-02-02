@@ -25,15 +25,11 @@ class LauncherDialog(QMainWindow):
     def __init__(self, config: Config):
         super().__init__()
         self._config = config
-        self._attached_thread_input = False
-        self._result_item_pool = []
-
         self._vault = []
-        self._load_vault()
+        self._result_item_pool = []
+        self._attached_thread_input = False
 
         self.toggle_signal.connect(self.toggle)
-        self._config.vault_change_signal.connect(self._load_vault)
-
         self.setFixedSize(UI_WIDTH, BASE_UI_HEIGHT)
         self.setWindowIcon(QIcon(WINDOW_ICON_PATH))
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
@@ -54,19 +50,6 @@ class LauncherDialog(QMainWindow):
         self._add_search_bar(layout)
         self._add_results_list(layout)
 
-    def _load_vault(self):
-        start = time.time()
-        self._vault = load_files(self._config.vault_directory)
-        logging.info(f"Loaded {len(self._vault)} files in {time.time() - start:.3f}s")
-
-    def toggle(self):
-        if self.isVisible():
-            self.close()
-        else:
-            self.show()
-            self._set_window_focus()
-            self.activateWindow()
-
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.close()
@@ -78,6 +61,23 @@ class LauncherDialog(QMainWindow):
         if event.type() == QEvent.ActivationChange:
             if not self.isActiveWindow():
                 self.close()
+
+    def toggle(self):
+        if self.isVisible():
+            self.close()
+        else:
+            self._load_vault()
+            self.show()
+
+    def _load_vault(self):
+        start = time.time()
+        self._vault = load_files(self._config.vault_directory)
+        logging.debug(f"Loaded {len(self._vault)} files in {time.time() - start:.3f}s")
+
+    def show(self):
+        super().show()
+        self._set_window_focus()
+        self.activateWindow()
 
     def _set_window_focus(self):
         handle = win32gui.FindWindow(None, WINDOW_NAME)

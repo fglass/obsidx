@@ -2,7 +2,6 @@ import json
 import logging
 import os
 import win32con
-from PyQt5 import QtCore
 from PyQt5.QtCore import QObject
 
 # App constants
@@ -22,8 +21,6 @@ FONT_SIZE = 11
 
 
 class Config(QObject):
-    vault_change_signal = QtCore.pyqtSignal()
-
     def __init__(self):
         super().__init__()
         self._toggle_hotkey = (win32con.VK_F12, win32con.MOD_WIN | win32con.MOD_ALT)
@@ -46,7 +43,6 @@ class Config(QObject):
     @vault_directory.setter
     def vault_directory(self, value):
         self._vault_directory = value
-        self.vault_change_signal.emit()
         self._save()
 
     @use_default_editor.setter
