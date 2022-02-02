@@ -23,7 +23,7 @@ FONT_SIZE = 11
 class Config(QObject):
     def __init__(self):
         super().__init__()
-        self._toggle_hotkey = (win32con.VK_F12, win32con.MOD_WIN | win32con.MOD_ALT)
+        self._toggle_hotkey = (win32con.VK_F12, (win32con.MOD_WIN, win32con.MOD_ALT))
         self._vault_directory = ""
         self._use_default_editor = False
         self._load()

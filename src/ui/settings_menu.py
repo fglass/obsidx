@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QCheckBox, QFileDialog, QPushButton, QHBoxLayout
 from src.config import Config, WINDOW_ICON_PATH, FOLDER_ICON_PATH
+from src.hotkey import hotkey_to_string
 
 MENU_WIDTH = 400
 MENU_HEIGHT = 150
@@ -34,7 +35,7 @@ class SettingsMenu(QWidget):
         vault_layout.addWidget(open_dialog_button)
 
         layout.addWidget(QLabel("Hotkey:"))
-        hotkey_field = QLineEdit("Win+Alt+F8")
+        hotkey_field = QLineEdit(hotkey_to_string(self._config.toggle_hotkey))
         hotkey_field.setDisabled(True)
         layout.addWidget(hotkey_field)
 

@@ -3,7 +3,7 @@ import sys
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication
 from src.config import Config, FONT_SIZE
-from src.hotkey_listener import HotkeyListener
+from src.hotkey import HotkeyListener
 from src.ui.launcher_dialog import LauncherDialog
 from src.ui.settings_menu import SettingsMenu
 from src.ui.tray_icon import TrayIcon
